@@ -31,8 +31,8 @@ export default withPageAuthRequired(function New() {
     setSuccess(false);
     setIsWaitingForResponse(true);
     console.log(postPrompt);
-    const res = await generatePost(postPrompt);
-    console.log(res);
+    //const res = await generatePost(postPrompt);
+    //console.log(res);
     /*if (res) {
       setIsWaitingForResponse(false);
       setHasSubmitted(false);
@@ -46,7 +46,7 @@ export default withPageAuthRequired(function New() {
       console.log("error");
     }
   }*/
-    await res
+    /*await res
       .json()
       .then((data) => {
         setIsWaitingForResponse(false);
@@ -60,6 +60,7 @@ export default withPageAuthRequired(function New() {
         setHasSubmitted(false);
         setError(true);
       });
+      */
   }
 
   return (
