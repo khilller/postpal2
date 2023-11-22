@@ -58,7 +58,7 @@ export default withPageAuthRequired(function New() {
         console.log(data);
         return data;
     } */
-    async function generatePosts(postPrompt: PostPrompt) {
+    /*async function generatePosts(postPrompt: PostPrompt) {
         return fetch("/api/openai", {
             method: "POST",
             headers: {
@@ -66,7 +66,7 @@ export default withPageAuthRequired(function New() {
             },
             body: JSON.stringify(postPrompt),
         });
-    }
+    }*/
 
     /*async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -102,6 +102,10 @@ export default withPageAuthRequired(function New() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
+        setIsWaitingForResponse(true);
+        setHasSubmitted(true);
+        setError(false);
+        setSuccess(false);
         try {
             const response = await fetch("/api/openai",{
                 method: "POST",
@@ -111,9 +115,14 @@ export default withPageAuthRequired(function New() {
                 body: JSON.stringify(postPrompt),
             });
             const data = await response.json();
+            setPost(data.post);
             console.log(data);
+            setIsWaitingForResponse(false);
+            setSuccess(true);
         } catch (error) {
             console.log(error);
+            setIsWaitingForResponse(false);
+            setError(true);
         }
     }
 

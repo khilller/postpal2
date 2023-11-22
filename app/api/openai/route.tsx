@@ -47,36 +47,44 @@ export async function POST(req:NextRequest, res:NextResponse) {
     const openai = new OpenAI({
         apiKey:process.env.OPENAI_API_KEY,
     })
-    
-   const message = await fetch('https://api.openai.com/v1/chat/completions',{
-    method: 'POST',
-    headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache, no-transform",
-        "X-Accel-Buffering": "no",
-        'Authorization': `Bearer ${openai.apiKey}`,
-    },
-    body: JSON.stringify({
-        "model": "gpt-3.5-turbo",
-        "messages": [
-            {
-                "role": "system",
-                "content": "You are an amazing, social media manager who writes amazing and thought provoking posts."
-            },
-            {
-                "role": "user",
-                "content": "Write me an interesting and eyecatching social post of length 300 from a first person narrative about a new product launch. The title is: The new iPhone 13 and the keywords are Apple, iPhone, and 13. The post should be SEO friendly and use the professional tone."
-            }
-        ],
-        
-    })
+    const body = await req.json();
+    const { title, description, keywords, length, social, tone } = body as PostPrompt;
+    const message = await fetch('https://api.openai.com/v1/chat/completions',{
+        method: 'POST',
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-transform",
+            "X-Accel-Buffering": "no",
+            'Authorization': `Bearer ${openai.apiKey}`,
+        },
+        body: JSON.stringify({
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are an amazing, social media manager who writes amazing and thought provoking posts."
+                },
+                {
+                    "role": "user",
+                    "content": `Write me an interesting and eyecatching ${social} post of length ${length} from a first person narrative about ${description}.
+                    The title is: ${title} and the keywords are ${keywords}. The post should be SEO friendly and use the ${tone}.`
+                }
+            ],
+            
+        })
    })
    const data = await message.json()
     console.log(data)
     const postResponse = data.choices[0]?.message?.content;
     console.log(postResponse)
-   return NextResponse.json({success: true, data: data}, {status: 200})
+
+    const post:Post = {
+        title: "",
+        content: postResponse || "",
+        uid: "",
+    }
+   return NextResponse.json({success: true, post:post}, {status: 200})
 }
 
 //this is the route for the openai api
