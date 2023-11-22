@@ -1,6 +1,6 @@
 //this is a placeholder api route
 
-import { NextRequest, NextResponse } from "next/server";
+/*import { NextRequest, NextResponse } from "next/server";
 
 type Payload = {
     body: string,
@@ -15,4 +15,4 @@ export async function GET(res:NextResponse) {
     
     console.log(data);
     return NextResponse.json(data);
-}
+}*/
