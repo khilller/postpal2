@@ -3,9 +3,9 @@
 import { Length } from "@/data/length";
 import { Social } from "@/data/social";
 import { Tones } from "@/data/tone";
-
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Loader2, ShieldAlert } from "lucide-react";
+import { useChat } from "ai/react"
 import React from "react";
 
 export default withPageAuthRequired(function New() {
@@ -23,51 +23,32 @@ export default withPageAuthRequired(function New() {
     social: "",
     tone: "",
   });
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    //reset all the flags
-    setHasSubmitted(true);
-    setError(false);
-    setSuccess(false);
-    setIsWaitingForResponse(true);
-    console.log(postPrompt);
-    //const res = await generatePost(postPrompt);
-    //console.log(res);
-    /*if (res) {
-      setIsWaitingForResponse(false);
-      setHasSubmitted(false);
-      setSuccess(true);
-      console.log(res);
-      setPost(res);
-    } else {
-      setIsWaitingForResponse(false);
-      setHasSubmitted(false);
-      setError(true);
-      console.log("error");
+
+  const { input, handleInputChange, handleSubmit, isLoading, messages } = useChat({
+    body: {
+        title: postPrompt.title,
+        description: postPrompt.description,
+        keywords: postPrompt.keywords,
+        length: postPrompt.length,
+        social: postPrompt.social,
+        tone: postPrompt.tone,
+        },
+        api: 'api/chat',
+    })
+
+    const onSubmit = (e: any) => {
+        handleSubmit(e)
+        console.log()
     }
-  }*/
-    /*await res
-      .json()
-      .then((data) => {
-        setIsWaitingForResponse(false);
-        setHasSubmitted(false);
-        setSuccess(true);
-        console.log(data);
-        setPost(data.post);
-      })
-      .catch((err) => {
-        setIsWaitingForResponse(false);
-        setHasSubmitted(false);
-        setError(true);
-      });
-      */
-  }
+
+    const lastMessage = messages[messages.length - 1];
+    const generatedBios = lastMessage?.role === "assistant" ? lastMessage.content : null;
 
   return (
     <section className="w-full flex flex-col items-center">
       <section className="w-[95%] max-w-4xl">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={onSubmit}
           className="w-full flex flex-col gap-4 mt-4 items-center"
         >
           <h1 className="text-4xl font-bold text-center text-indigo-600">
@@ -87,9 +68,7 @@ export default withPageAuthRequired(function New() {
               id="title"
               placeholder="Enter a title! (e.g. 'How to make a social Media Post')"
               value={postPrompt.title}
-              onChange={(e) =>
-                setPostPrompt({ ...postPrompt, title: e.target.value })
-              }
+              onChange={(e) => setPostPrompt({ ...postPrompt, title: e.target.value })}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
