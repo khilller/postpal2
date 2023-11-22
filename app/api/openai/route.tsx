@@ -43,7 +43,10 @@ export async function POST(req:NextRequest, res:NextResponse) {
 }
 */
 
+export const runtime = "edge"
+
 export async function POST(req:NextRequest, res:NextResponse) {
+
     const openai = new OpenAI({
         apiKey:process.env.OPENAI_API_KEY,
     })
@@ -74,17 +77,20 @@ export async function POST(req:NextRequest, res:NextResponse) {
             
         })
    })
-   const data = await message.json()
+    const data = await message.json()
     console.log(data)
     const postResponse = data.choices[0]?.message?.content;
     console.log(postResponse)
 
+    console.log(message.headers.get('content-type'))
     const post:Post = {
         title: "",
         content: postResponse || "",
         uid: "",
     }
    return NextResponse.json({success: true, post:post}, {status: 200})
+
+
 }
 
 //this is the route for the openai api
