@@ -10,10 +10,12 @@ import React from "react";
 
 export default withPageAuthRequired(function New() {
   const [post, setPost] = React.useState<Post | null>(null);
+  const [posts, setPosts] = React.useState<Payload | null>(null);
   const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const [hasSubmitted, setHasSubmitted] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
+  const [description, setDescription] = React.useState("");
 
   const [postPrompt, setPostPrompt] = React.useState<PostPrompt>({
     title: "",
@@ -24,7 +26,7 @@ export default withPageAuthRequired(function New() {
     tone: "",
   });
 
-  const { input, handleInputChange, handleSubmit, isLoading, messages } = useChat({
+  /*const { input, handleInputChange, handleSubmit, isLoading, messages } = useChat({
     body: {
         title: postPrompt.title,
         description: postPrompt.description,
@@ -34,21 +36,111 @@ export default withPageAuthRequired(function New() {
         tone: postPrompt.tone,
         },
         api: 'api/chat',
+    })*/
+
+        //this is the original callAPI function
+    /*const callAPI = async () => {
+        const response = await fetch("/api/openai", {
+            method: "POST",
+            body: JSON.stringify({
+                title: postPrompt.title,
+                description: postPrompt.description,
+                keywords: postPrompt.keywords,
+                length: postPrompt.length,
+                social: postPrompt.social,
+                tone: postPrompt.tone,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } */
+    async function generatePosts(postPrompt: PostPrompt) {
+        return fetch("/api/openai", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postPrompt),
+        });
+    }
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsWaitingForResponse(true);
+        setHasSubmitted(true);
+        setError(false);
+        setSuccess(false);
+        try {
+            const response = await generatePosts(postPrompt);
+            const data = await response.json();
+            setPost(data.post);
+            console.log(post);
+            setIsWaitingForResponse(false);
+            setSuccess(true);
+        } catch (err) {
+            console.log(err);
+            setIsWaitingForResponse(false);
+            setError(true);
+        }
+    }
+
+    
+    //placeholder API call
+    /*const { input, handleInputChange, handleSubmit, isLoading, messages } = useChat({
+        body:{
+            description,
+        },
+        headers: {
+
+        }
     })
 
     const onSubmit = (e: any) => {
+        setDescription(input);
         handleSubmit(e)
-        console.log()
+        console.log(description)
     }
 
     const lastMessage = messages[messages.length - 1];
+    console.log(lastMessage)
     const generatedBios = lastMessage?.role === "assistant" ? lastMessage.content : null;
+    console.log(generatedBios) 
+    
+    Placeholder API call
+    //lets make a new callAPI function
+    const callAPI2 = async () => {
+        try {
+            const response = await fetch("/api/placeholder");
+            const data = await response.json();
+            console.log(data);
+            setPosts(data);
+        return data;
+        } catch (err) {
+            console
+        }
+        
+    }
+
+    {posts && (
+        <div className="w-full flex flex-col gap-4 mt-4">
+        <h1 className="text-4xl font-bold text-gray-800">{posts.title}</h1>
+        <h2 className="text-gray-600">{posts.userId}</h2>
+        <p className="text-gray-600">{posts.body}</p>
+      </div>
+       )} 
+    
+    
+    */
 
   return (
     <section className="w-full flex flex-col items-center">
       <section className="w-[95%] max-w-4xl">
         <form
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit}
           className="w-full flex flex-col gap-4 mt-4 items-center"
         >
           <h1 className="text-4xl font-bold text-center text-indigo-600">
@@ -85,9 +177,7 @@ export default withPageAuthRequired(function New() {
               id="description"
               placeholder="Enter a Description"
               value={postPrompt.description}
-              onChange={(e) =>
-                setPostPrompt({ ...postPrompt, description: e.target.value })
-              }
+              onChange={(e) => setPostPrompt({ ...postPrompt, description: e.target.value })}
             />
           </div>
           <div className="w-full flex flex-col gap-2">
@@ -206,6 +296,7 @@ export default withPageAuthRequired(function New() {
             <p className="text-gray-600">{post.content}</p>
           </div>
         )}
+        
       </section>
     </section>
   );
