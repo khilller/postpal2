@@ -68,7 +68,7 @@ export default withPageAuthRequired(function New() {
         });
     }
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    /*async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsWaitingForResponse(true);
         setHasSubmitted(true);
@@ -85,6 +85,35 @@ export default withPageAuthRequired(function New() {
             console.log(err);
             setIsWaitingForResponse(false);
             setError(true);
+        }
+    }*/
+
+    /*async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        try {
+            const response = await fetch("/api/openai")
+            const data = await response.json();
+            console.log(data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }*/
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
+        e.preventDefault();
+        try {
+            const response = await fetch("/api/openai",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postPrompt),
+            });
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.log(error);
         }
     }
 
