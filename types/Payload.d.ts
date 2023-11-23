@@ -1,6 +1,8 @@
 interface Payload {
-    body: string,
-    id: string,
-    title: string,
-    userId: string
+    model: string,
+    message: string[],
+    temperature: number,
+    top_p: number,
+    stream: true,
+    n: 1,
 }

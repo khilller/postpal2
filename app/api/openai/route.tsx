@@ -1,8 +1,9 @@
 //this is the route for the openai api
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSession, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import OpenAI from "openai"
-import axios from "axios";
+import { OpenAIStream } from "ai";
 
 /*
 export async function POST(req:NextRequest, res:NextResponse) {
@@ -78,11 +79,8 @@ export async function POST(req:NextRequest, res:NextResponse) {
         })
    })
     const data = await message.json()
-    console.log(data)
     const postResponse = data.choices[0]?.message?.content;
     console.log(postResponse)
-
-    console.log(message.headers.get('content-type'))
     const post:Post = {
         title: "",
         content: postResponse || "",
@@ -90,58 +88,4 @@ export async function POST(req:NextRequest, res:NextResponse) {
     }
    return NextResponse.json({success: true, post:post}, {status: 200})
 
-
 }
-
-//this is the route for the openai api
-/*import { Configuration, OpenAIApi } from "openai-edge"
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-const openai = new OpenAIApi(configuration)
-
-const handler = async (req: NextRequest, res: NextResponse) => {
-  const { searchParams } = new URL(req.url)
-
-  try {
-    const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        { role: "user", content: "Who won the world series in 2020?" },
-        {
-          role: "assistant",
-          content: "The Los Angeles Dodgers won the World Series in 2020.",
-        },
-        { role: "user", content: "Where was it played?" },
-      ],
-      max_tokens: 7,
-      temperature: 0,
-      stream: true,
-    })
-
-    return new Response(completion.body, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "text/event-stream;charset=utf-8",
-        "Cache-Control": "no-cache, no-transform",
-        "X-Accel-Buffering": "no",
-      },
-    })
-  } catch (error: any) {
-    console.error(error)
-
-    return new NextResponse(JSON.stringify(error), {
-      status: 400,
-      headers: {
-        "content-type": "application/json",
-      },
-    })
-  }
-}
-
-export const runtime = "edge"
-
-export default handler
-*/

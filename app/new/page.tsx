@@ -4,18 +4,19 @@ import { Length } from "@/data/length";
 import { Social } from "@/data/social";
 import { Tones } from "@/data/tone";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import { Loader2, ShieldAlert } from "lucide-react";
+import { Loader2, ShieldAlert, ClipboardCheck } from "lucide-react";
 import { useChat } from "ai/react"
 import React from "react";
 
 export default withPageAuthRequired(function New() {
   const [post, setPost] = React.useState<Post | null>(null);
-  const [posts, setPosts] = React.useState<Payload | null>(null);
+  const [posts, setPosts] = React.useState("");
   const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const [hasSubmitted, setHasSubmitted] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [description, setDescription] = React.useState("");
+  const characterCount = post?.content.length || 0;
 
   const [postPrompt, setPostPrompt] = React.useState<PostPrompt>({
     title: "",
@@ -26,79 +27,17 @@ export default withPageAuthRequired(function New() {
     tone: "",
   });
 
-  /*const { input, handleInputChange, handleSubmit, isLoading, messages } = useChat({
-    body: {
-        title: postPrompt.title,
-        description: postPrompt.description,
-        keywords: postPrompt.keywords,
-        length: postPrompt.length,
-        social: postPrompt.social,
-        tone: postPrompt.tone,
-        },
-        api: 'api/chat',
-    })*/
+  const copyText = () => {
+    window.focus();
+    navigator.clipboard.writeText(post?.content || "").then(
+        () => {
+            alert("Copied to clipboard!");
+            }
+    )
+  }
 
-        //this is the original callAPI function
-    /*const callAPI = async () => {
-        const response = await fetch("/api/openai", {
-            method: "POST",
-            body: JSON.stringify({
-                title: postPrompt.title,
-                description: postPrompt.description,
-                keywords: postPrompt.keywords,
-                length: postPrompt.length,
-                social: postPrompt.social,
-                tone: postPrompt.tone,
-            }),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        const data = await response.json();
-        console.log(data);
-        return data;
-    } */
-    /*async function generatePosts(postPrompt: PostPrompt) {
-        return fetch("/api/openai", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postPrompt),
-        });
-    }*/
+  const prompt = `You are an amazing, ${postPrompt.social} media manager who writes amazing and thought provoking posts. Write me an interesting and eyecatching ${postPrompt.social} post of length ${postPrompt.length} from a first person narrative about ${postPrompt.description}. The title is: ${postPrompt.title} and the keywords are ${postPrompt.keywords}. The post should be SEO friendly and use the ${postPrompt.tone}.`
 
-    /*async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setIsWaitingForResponse(true);
-        setHasSubmitted(true);
-        setError(false);
-        setSuccess(false);
-        try {
-            const response = await generatePosts(postPrompt);
-            const data = await response.json();
-            setPost(data.post);
-            console.log(post);
-            setIsWaitingForResponse(false);
-            setSuccess(true);
-        } catch (err) {
-            console.log(err);
-            setIsWaitingForResponse(false);
-            setError(true);
-        }
-    }*/
-
-    /*async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        try {
-            const response = await fetch("/api/openai")
-            const data = await response.json();
-            console.log(data);
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }*/
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
@@ -125,54 +64,6 @@ export default withPageAuthRequired(function New() {
             setError(true);
         }
     }
-
-    
-    //placeholder API call
-    /*const { input, handleInputChange, handleSubmit, isLoading, messages } = useChat({
-        body:{
-            description,
-        },
-        headers: {
-
-        }
-    })
-
-    const onSubmit = (e: any) => {
-        setDescription(input);
-        handleSubmit(e)
-        console.log(description)
-    }
-
-    const lastMessage = messages[messages.length - 1];
-    console.log(lastMessage)
-    const generatedBios = lastMessage?.role === "assistant" ? lastMessage.content : null;
-    console.log(generatedBios) 
-    
-    Placeholder API call
-    //lets make a new callAPI function
-    const callAPI2 = async () => {
-        try {
-            const response = await fetch("/api/placeholder");
-            const data = await response.json();
-            console.log(data);
-            setPosts(data);
-        return data;
-        } catch (err) {
-            console
-        }
-        
-    }
-
-    {posts && (
-        <div className="w-full flex flex-col gap-4 mt-4">
-        <h1 className="text-4xl font-bold text-gray-800">{posts.title}</h1>
-        <h2 className="text-gray-600">{posts.userId}</h2>
-        <p className="text-gray-600">{posts.body}</p>
-      </div>
-       )} 
-    
-    
-    */
 
   return (
     <section className="w-full flex flex-col items-center">
@@ -329,9 +220,16 @@ export default withPageAuthRequired(function New() {
           </div>
         )}
         {success && post && (
-          <div className="w-full flex flex-col gap-4 mt-4">
-            <h1 className="text-4xl font-bold text-gray-800">{post.title}</h1>
+          <div className="bg-white rounded-xl shadow-md w-full p-4 flex flex-col gap-4 mt-4 hover:bg-gray-100 transition cursor-copy border">
+            <div className="flex flex-row justify-between">
+                <h1 className="text-gray-600 text-4xl font-semibold">{post.title}</h1>
+                <ClipboardCheck className="z-10" size={20} onClick={copyText}/>
+            </div>
             <p className="text-gray-600">{post.content}</p>
+            <div className="flex flex-row justify-between">
+                <div></div>
+                <p className="text-gray-600 text-sm">Total Characters: {characterCount}</p>
+            </div>
           </div>
         )}
         
