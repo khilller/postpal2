@@ -215,7 +215,7 @@ export default withPageAuthRequired(function New() {
           <div className="w-full flex flex-col gap-4 mt-4 items-center">
             <ShieldAlert className="w-8 h-8 text-rose-600 " />
             <p className="text-rose-600 text-cetnter">
-              Something went wrong! Please try again
+              We are experiencing high traffic, Please try again.
             </p>
           </div>
         )}
