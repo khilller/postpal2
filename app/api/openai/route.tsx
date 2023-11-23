@@ -8,9 +8,7 @@ import { OpenAIStream } from "ai";
 
 export const runtime = "edge"
 
-export const config = {
-    matcher: '/about/:path*'
-}
+export const matcher = '/about/:path*'
 
 const withMiddlewareAuthRequiredEdge = withMiddlewareAuthRequired as any
 
