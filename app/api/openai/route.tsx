@@ -8,8 +8,6 @@ import { OpenAIStream } from "ai";
 
 export const runtime = "edge"
 
-export const config = '/about/:path*'
-
 const withMiddlewareAuthRequiredEdge = withMiddlewareAuthRequired as any
 
 export const  POST = withMiddlewareAuthRequiredEdge( async(req:NextRequest, res:NextResponse) => {
