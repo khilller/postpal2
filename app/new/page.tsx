@@ -55,7 +55,7 @@ export default withPageAuthRequired(function New() {
             });
             const data = await response.json();
             setPost(data.post);
-            console.log(data);
+            console.log(post);
             setIsWaitingForResponse(false);
             setSuccess(true);
         } catch (error) {

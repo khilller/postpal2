@@ -33,8 +33,8 @@ export const  POST = withMiddlewareAuthRequiredEdge( async(req:NextRequest, res:
             'Authorization': `Bearer ${openai.apiKey}`,
         },
         body: JSON.stringify({
-            "model": "gpt-3.5-turbo",
-            "messages": [
+            model: "gpt-3.5-turbo",
+            messages: [
                 {
                     "role": "system",
                     "content": "You are an amazing, social media manager who writes amazing and thought provoking posts."
@@ -45,16 +45,19 @@ export const  POST = withMiddlewareAuthRequiredEdge( async(req:NextRequest, res:
                     The title is: ${title} and the keywords are ${keywords}. The post should be SEO friendly and use the ${tone}.`
                 }
             ],
+            stream: false
             
         })
    })
     const data = await message.json()
     const postResponse = data.choices[0]?.message?.content;
+
     const post:Post = {
         title: "",
         content: postResponse || "",
         uid: user?.sub,
     }
-   return NextResponse.json({success: true, post:post}, {status: 200})
+   
+    return NextResponse.json({success: true, post:post}, { status: 200 })
 
 })
