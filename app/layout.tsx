@@ -28,7 +28,7 @@ export default function RootLayout({
             <Navbar />
             <main className="w-full h-full flex flex-col md:flex-row">
               <Sidebar />
-              <div className='w-full md:pr-32 overflow-auto'>{children}</div>
+              <div className='w-full overflow-auto'>{children}</div>
             </main>
             <Analytics />
           </body>

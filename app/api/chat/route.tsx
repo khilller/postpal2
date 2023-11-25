@@ -1,4 +1,5 @@
 import { OpenAIStream } from "@/lib/functions/openaiStream";
+import { withMiddlewareAuthRequired } from "@auth0/nextjs-auth0/edge";
 
 export const runtime = "edge"
 
@@ -28,7 +29,9 @@ if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not set")
 }
 
-export const POST = async (req: Request) => {
+const withMiddlewareAuthRequiredEdge = withMiddlewareAuthRequired as any
+
+export const POST = withMiddlewareAuthRequiredEdge (async (req: Request) => {
     const data = (await req.json())
     const { title, description, keywords, length, social, tone } = data as PostPrompt;
     console.log(data)
@@ -61,4 +64,4 @@ export const POST = async (req: Request) => {
     return new Response(stream)
 
 
-}
+});
