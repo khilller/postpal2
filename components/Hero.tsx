@@ -20,13 +20,12 @@ export default function Hero() {
             </h2>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-4">
+          <div className="flex flex-col items-center justify-center gap-4 mt-16">
             <h1 className="mt-4 text-4xl font-bold text-cetner text-indigo-600">
-              Hello!
+              Discover and Share!
             </h1>
-            <h2 className="text-xl max-w-lg text-center">
-              Welcome to Postpal, where you can easily create social media posts
-              with just one click!
+            <h2 className="text-xl max-w-lg text-center text-stone-500">
+            Elevate Your Social Media with One-Click Post Brilliance!
             </h2>
             <a
               href="/api/auth/login"
