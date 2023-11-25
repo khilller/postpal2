@@ -11,10 +11,10 @@ export default function Hero() {
       <section className="w-full flex flex-col px-4">
         {user ? (
           <div className="flex flex-col items-center justify-center">
-            <h1 className="mt-10 text-3xl md:text-4xl font-bold text-center text-indigo-600">
+            <h1 className="mt-10 text-xl md:text-4xl font-bold text-center text-indigo-600">
               Hello, {user?.name || "dear user"}
             </h1>
-            <h2 className="text-lg md:text-xl max-w-lg text-center mt-4">
+            <h2 className="text-sm md:text-xl max-w-lg text-center mt-4">
               Welcome to PostPal, where you can easily create social media posts
               with just one click.
             </h2>
