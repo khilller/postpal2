@@ -20,7 +20,7 @@ interface Payload {
     frequency_penalty: number,
     presence_penalty: number,
     max_tokens: number,
-    stream: true,
+    stream: boolean,
     n: number,
 }
 
@@ -31,7 +31,7 @@ export async function OpenAIStream( payload: Payload) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${openai.apiKey || ""}`
+            Authorization: `Bearer ${openai.apiKey || ""}`
         },
         body: JSON.stringify(payload)
     });
@@ -39,41 +39,39 @@ export async function OpenAIStream( payload: Payload) {
     let counter = 0;
 
     const stream = new ReadableStream({
-        async start(contoller) {
-            function push(event: ParsedEvent | ReconnectInterval) {
+        async start(controller) {
+            function onParse(event: ParsedEvent | ReconnectInterval) {
                 if(event.type === "event") {
-                    const { data } = event;
+                    const data = event.data;
 
-                    if(data) {
-                        contoller.close();
+                    if(data === "[DONE]") {
+                        controller.close();
                         return;
                     }
 
                     try {
                         const json = JSON.parse(data);
-                        console.log(json.choices)
                         const text = json.choices[0].delta?.content || "";
 
                         if (counter < 2 && (text.match(/\n/) || []).length) {
                             return;
                         }
                         const queue = encoder.encode(text);
-                        contoller.enqueue(queue);
+                        controller.enqueue(queue);
                         counter++;
 
                     } catch (error) {
-                        contoller.error(error);
+                        controller.error(error);
                     }
                 }
             }
-            const parser = createParser(push);
+            const parser = createParser(onParse);
 
             for await (const chunk of res.body as any) {
                 parser.feed(decoder.decode(chunk));
             }
         }
     });
-    console.log(stream)
     return stream;
 
 }

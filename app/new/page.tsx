@@ -7,16 +7,18 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Loader2, ShieldAlert, ClipboardCheck } from "lucide-react";
 import { useChat } from "ai/react"
 import React from "react";
+import { useRecoilState } from "recoil";
+import { PostAtom } from "@/atoms/postAtom";
 
 export default withPageAuthRequired(function New() {
   const [post, setPost] = React.useState<Post | null>(null);
-  const [posts, setPosts] = React.useState("");
+  const [posts, setPosts]  = React.useState("");
   const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const [hasSubmitted, setHasSubmitted] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [description, setDescription] = React.useState("");
-  const characterCount = post?.content.length || 0;
+  const characterCount = posts?.length || 0;
 
   const [postPrompt, setPostPrompt] = React.useState<PostPrompt>({
     title: "",
@@ -67,31 +69,55 @@ export default withPageAuthRequired(function New() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
-        const res = await fetch("/api/chat",{
+        console.log(prompt)
+        setIsWaitingForResponse(true);
+        setHasSubmitted(true);
+        setError(false);
+        setSuccess(false);
+        try {
+          const res = await fetch("/api/chat",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({prompt}),
-        });
+            body: JSON.stringify(postPrompt),
+          });
 
-        if (!res.ok) throw new Error(res.statusText);
+          if (!res.ok) throw new Error(res.statusText);
+          setPosts("");
 
-        const data = res.body;
+          const data = res.body;
+        
 
-        if(!data) return
+          if(!data) return
 
-        const reader = data.getReader();
-        const decoder = new TextDecoder();
-        let done = false;
+          const reader = data.getReader();
+          const decoder = new TextDecoder();
+          let done = false;
 
-        while(!done){
-            const {value, done: readerDone} = await reader.read();
-            done = readerDone;
-            const chunkValue = decoder.decode(value);
-            console.log(chunkValue);
-            setPosts((prev) => prev + chunkValue);
+          while(!done){
+              const {value, done: readerDone} = await reader.read();
+              done = readerDone;
+              const chunkValue = decoder.decode(value);
+              setPosts((prev) => prev + chunkValue);
+          }
+          setIsWaitingForResponse(false);
+          setSuccess(true);
+            
+        } catch (error) {
+          console.log(error);
+          setIsWaitingForResponse(false);
+          setError(true);
         }
+
+        /**<button
+            type="submit"
+            className="bg-indigo-600 w-fit text-white px-4 py-2 rounded-md mt-4 hover:bg-indigo-500 transition-all cursor-pointer"
+          >
+            Generate
+          </button> */
+
+        
     }
 
   return (
@@ -228,18 +254,22 @@ export default withPageAuthRequired(function New() {
               </select>
             </div>
           </div>
-          <button
+          {isWaitingForResponse && hasSubmitted ? (
+            <button
+            className="bg-indigo-600 w-fit text-white px-4 py-2 rounded-md mt-4 hover:bg-indigo-500 transition-all cursor-pointer"
+            >
+            <Loader2 className="animate-spin w-16 h-6"  size={13}/>
+            </button>) :
+          (
+            <button
             type="submit"
             className="bg-indigo-600 w-fit text-white px-4 py-2 rounded-md mt-4 hover:bg-indigo-500 transition-all cursor-pointer"
-          >
+            >
             Generate
           </button>
+          )}
         </form>
-        {isWaitingForResponse && hasSubmitted && (
-          <div className="w-full flex flex-col gap-4 mt-4 items-center">
-            <Loader2 className="animate-spin w-8 h-8 text-indigo-600" />
-          </div>
-        )}
+        
         {error && (
           <div className="w-full flex flex-col gap-4 mt-4 items-center">
             <ShieldAlert className="w-8 h-8 text-rose-600 " />
@@ -263,9 +293,27 @@ export default withPageAuthRequired(function New() {
         )}
 
         {posts && (
-            <div className="bg-white rounded-xl shadow-md w-full p-4 flex flex-col gap-4 mt-4 hover:bg-gray-100 transition cursor-copy border">
-              <p className="text-gray-600">{posts}</p>
+          <div className="w-full flex flex-col gap-2 mt-4">
+            <div className="flex flex-row justify-between">
+              <label className="text-gray-600 text-sm font-semibold">
+              Description
+              </label>
+              <ClipboardCheck className="z-10" size={20} onClick={copyText}/>
             </div>
+          
+          <textarea
+            className="w-full border border-gray-200 shadow-md rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            rows={7}
+            name="description"
+            id="description"
+            placeholder="Enter a Description"
+            value={posts}
+          />
+          <div className="flex flex-row justify-between">
+                <div></div>
+                <p className="text-gray-600 text-sm">Total Characters: {characterCount}</p>
+            </div>
+        </div>
         )}
         
       </section>

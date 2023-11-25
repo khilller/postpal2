@@ -17,7 +17,7 @@ interface Payload {
     frequency_penalty: number,
     presence_penalty: number,
     max_tokens: number,
-    stream: true,
+    stream: boolean,
     n: number,
 }
 
@@ -29,7 +29,9 @@ if (!process.env.OPENAI_API_KEY) {
 }
 
 export const POST = async (req: Request) => {
-    const data = (await req.json()) as string;
+    const data = (await req.json())
+    const { title, description, keywords, length, social, tone } = data as PostPrompt;
+    console.log(data)
     //const { title, description, keywords, length, social, tone } = data as PostPrompt;
     if (!data) return new Response("No data provided", { status: 400 });
 
@@ -37,7 +39,13 @@ export const POST = async (req: Request) => {
         model: "gpt-3.5-turbo",
         messages: [
             {
-                role: "user", content: data
+                "role": "system",
+                "content": "You are an amazing, social media manager who writes amazing and thought provoking posts."
+            },
+            {
+                "role": "user",
+                "content": `Write me an interesting and eyecatching ${social} post of length ${length} from a first person narrative about ${description}.
+                The title is: ${title} and the keywords are ${keywords}. The post should be SEO friendly and use the ${tone}.`
             }
         ],
         temperature: 0.4,
