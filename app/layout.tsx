@@ -22,7 +22,7 @@ export default function RootLayout({
       <UserProvider>
         <RecoilRoot>
           <head>
-            <title>Pospal</title>
+            <title>Postpal</title>
           </head>
           <body className={`${inter.className} bg-gray-50 w-full h-screen overflow-clip flex flex-col`}>
             <Navbar />
