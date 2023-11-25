@@ -21,10 +21,10 @@ export default function Hero() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-4 mt-16">
-            <h1 className="mt-4 text-4xl font-bold text-cetner text-indigo-600">
+            <h1 className="mt-4 text-3xl md:text-4xl font-bold text-cetner text-indigo-600">
               Discover and Share!
             </h1>
-            <h2 className="text-xl max-w-lg text-center text-stone-500">
+            <h2 className="text-lg md:text-xl max-w-lg text-center text-stone-500">
             Elevate Your Social Media with One-Click Post Brilliance!
             </h2>
             <a
