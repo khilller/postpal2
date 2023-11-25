@@ -72,7 +72,6 @@ export default withPageAuthRequired( function New() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
-        console.log(prompt)
         setIsWaitingForResponse(true);
         setHasSubmitted(true);
         setError(false);
