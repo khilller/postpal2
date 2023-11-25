@@ -39,7 +39,7 @@ export default withPageAuthRequired(function New() {
   const prompt = `You are an amazing, ${postPrompt.social} media manager who writes amazing and thought provoking posts. Write me an interesting and eyecatching ${postPrompt.social} post of length ${postPrompt.length} from a first person narrative about ${postPrompt.description}. The title is: ${postPrompt.title} and the keywords are ${postPrompt.keywords}. The post should be SEO friendly and use the ${postPrompt.tone}.`
 
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
+   /* async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
         setIsWaitingForResponse(true);
         setHasSubmitted(true);
@@ -62,6 +62,35 @@ export default withPageAuthRequired(function New() {
             console.log(error);
             setIsWaitingForResponse(false);
             setError(true);
+        }
+    }*/
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
+        e.preventDefault();
+        const res = await fetch("/api/chat",{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({prompt}),
+        });
+
+        if (!res.ok) throw new Error(res.statusText);
+
+        const data = res.body;
+
+        if(!data) return
+
+        const reader = data.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        while(!done){
+            const {value, done: readerDone} = await reader.read();
+            done = readerDone;
+            const chunkValue = decoder.decode(value);
+            console.log(chunkValue);
+            setPosts((prev) => prev + chunkValue);
         }
     }
 
@@ -231,6 +260,12 @@ export default withPageAuthRequired(function New() {
                 <p className="text-gray-600 text-sm">Total Characters: {characterCount}</p>
             </div>
           </div>
+        )}
+
+        {posts && (
+            <div className="bg-white rounded-xl shadow-md w-full p-4 flex flex-col gap-4 mt-4 hover:bg-gray-100 transition cursor-copy border">
+              <p className="text-gray-600">{posts}</p>
+            </div>
         )}
         
       </section>
