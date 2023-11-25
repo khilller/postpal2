@@ -5,7 +5,7 @@ import SignIn from '../SignIn'
 
 export default function Navbar() {
   return (
-    <nav className="w-full bg-white shadow-md px-4 md:px-6 py-2 z-20 flex flex-row justify-between">
+    <nav className="w-full fixed top-0 left-0 bg-white shadow-md px-4 md:px-6 py-2 z-20 flex flex-row justify-between">
     <Link
       href="/"
       className="flex flex-row justify-center font-bold text-xl text-indigo-600 items-center gap-2 cursor-pointer"
