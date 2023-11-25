@@ -1,4 +1,5 @@
 //this is the route for the openai api
+// this needs to be deprevated
 
 import { NextRequest, NextResponse } from "next/server";
 import { withMiddlewareAuthRequired, getSession } from "@auth0/nextjs-auth0/edge";

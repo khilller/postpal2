@@ -31,7 +31,7 @@ export default withPageAuthRequired(function New() {
 
   const copyText = () => {
     window.focus();
-    navigator.clipboard.writeText(post?.content || "").then(
+    navigator.clipboard.writeText(posts || "").then(
         () => {
             alert("Copied to clipboard!");
             }
@@ -296,7 +296,7 @@ export default withPageAuthRequired(function New() {
           <div className="w-full flex flex-col gap-2 mt-4">
             <div className="flex flex-row justify-between">
               <label className="text-gray-600 text-sm font-semibold">
-              Description
+              Response
               </label>
               <ClipboardCheck className="z-10" size={20} onClick={copyText}/>
             </div>
