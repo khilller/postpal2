@@ -29,7 +29,7 @@ export default function SignIn() {
               <Credits />
               <span className="h-0.5 w-full bg-gray-300  w-3/4"></span>
               <Link
-                href="/user"
+                href="/profile"
                 onClick={() => setToggleDropdown((prev) => !prev)}
                 className="hover:text-gray-500"
               >
