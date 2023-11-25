@@ -26,7 +26,7 @@ export default function RootLayout({
           </head>
           <body className={`${inter.className} bg-gray-50 w-full h-screen overflow-clip flex flex-col`}>
             <Navbar />
-            <main className="w-full h-full flex flex-col md:flex-row">
+            <main className="w-full h-full flex flex-col md:flex-row mt-12">
               <Sidebar />
               <div className='w-full overflow-auto'>{children}</div>
             </main>
