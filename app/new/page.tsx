@@ -3,14 +3,14 @@
 import { Length } from "@/data/length";
 import { Social } from "@/data/social";
 import { Tones } from "@/data/tone";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import { withPageAuthRequired,useUser } from "@auth0/nextjs-auth0/client";
 import { Loader2, ShieldAlert, ClipboardCheck } from "lucide-react";
 import { useChat } from "ai/react"
 import React from "react";
 import { useRecoilState } from "recoil";
 import { PostAtom } from "@/atoms/postAtom";
 
-export default withPageAuthRequired(function New() {
+export default withPageAuthRequired( function New() {
   const [post, setPost] = React.useState<Post | null>(null);
   const [posts, setPosts]  = React.useState("");
   const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
@@ -19,6 +19,9 @@ export default withPageAuthRequired(function New() {
   const [success, setSuccess] = React.useState(false);
   const [description, setDescription] = React.useState("");
   const characterCount = posts?.length || 0;
+  const [userProfile, setUserProfile] = React.useState("");
+
+  const { user } = useUser();
 
   const [postPrompt, setPostPrompt] = React.useState<PostPrompt>({
     title: "",
@@ -85,6 +88,8 @@ export default withPageAuthRequired(function New() {
 
           if (!res.ok) throw new Error(res.statusText);
           setPosts("");
+          setUserProfile(user?.sub || "") //need to make this a global state just so that we can use it for mongodb!
+        
 
           const data = res.body;
         
@@ -308,6 +313,7 @@ export default withPageAuthRequired(function New() {
             id="description"
             placeholder="Enter a Description"
             value={posts}
+            readOnly
           />
           <div className="flex flex-row justify-between">
                 <div></div>
