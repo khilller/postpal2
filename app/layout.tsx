@@ -7,6 +7,7 @@ import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { RecoilRoot } from 'recoil'
 import Navbar from '../components/nav/Navbar'
 import Sidebar from '@/components/nav/Sidebar'
+import { Analytics } from '@vercel/analytics/react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,7 +30,8 @@ export default function RootLayout({
               <Sidebar />
               <div className='w-full md:pr-32 overflow-auto'>{children}</div>
             </main>
-            </body>
+            <Analytics />
+          </body>
         </RecoilRoot>
       </UserProvider>
     </html>

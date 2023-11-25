@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.3.0",
+    "@vercel/analytics": "^1.1.1",
     "ai": "^2.2.25",
     "axios": "^1.6.2",
     "eventsource-parser": "^1.1.1",
