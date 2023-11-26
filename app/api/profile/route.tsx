@@ -33,7 +33,7 @@ export const GET = withApiAuthRequiredExtended (async (request: NextRequest, res
             profile = data[0];
         }
 
-        return NextResponse.json({ success: true, posts: data})
+        return NextResponse.json({ success: true, profile: profile})
     } catch (error) {
         return NextResponse.json({success: false})
     }
