@@ -1,3 +1,5 @@
+//this is the route for the chat api
+
 import { OpenAIStream } from "@/lib/functions/openaiStream";
 import { withMiddlewareAuthRequired } from "@auth0/nextjs-auth0/edge";
 
@@ -22,9 +24,6 @@ interface Payload {
     n: number,
 }
 
-
-
-
 if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not set")
 }
@@ -34,7 +33,7 @@ const withMiddlewareAuthRequiredEdge = withMiddlewareAuthRequired as any
 export const POST = withMiddlewareAuthRequiredEdge (async (req: Request) => {
     const data = (await req.json())
     const { title, description, keywords, length, social, tone } = data as PostPrompt;
-    console.log(data)
+    //console.log(data)
     //const { title, description, keywords, length, social, tone } = data as PostPrompt;
     if (!data) return new Response("No data provided", { status: 400 });
 
@@ -61,7 +60,6 @@ export const POST = withMiddlewareAuthRequiredEdge (async (req: Request) => {
     }
 
     const stream = await OpenAIStream(payload);
-    return new Response(stream)
-
+    return new Response(stream, { status: 200 });
 
 });

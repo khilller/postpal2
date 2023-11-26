@@ -4,14 +4,14 @@ import { Length } from "@/data/length";
 import { Social } from "@/data/social";
 import { Tones } from "@/data/tone";
 import { withPageAuthRequired,useUser } from "@auth0/nextjs-auth0/client";
-import { Loader2, ShieldAlert, ClipboardCheck } from "lucide-react";
+import { Loader2, ShieldAlert, ClipboardCheck,Clipboard } from "lucide-react";
 import { useChat } from "ai/react"
 import React from "react";
 import { useRecoilState } from "recoil";
 import { PostAtom } from "@/atoms/postAtom";
 
 export default withPageAuthRequired( function New() {
-  const [post, setPost] = React.useState<Post | null>(null);
+  const [post, setPost] = React.useState("");
   const [posts, setPosts]  = React.useState("");
   const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const [hasSubmitted, setHasSubmitted] = React.useState(false);
@@ -20,6 +20,9 @@ export default withPageAuthRequired( function New() {
   const [description, setDescription] = React.useState("");
   const characterCount = posts?.length || 0;
   const [userProfile, setUserProfile] = React.useState("");
+  const [copied, setCopied] = React.useState(false); //this is for the clipboard icon
+  const [clicked, setClicked] = React.useState(false); //this is for the clipboard icon animation
+ 
 
   const { user } = useUser();
 
@@ -33,16 +36,19 @@ export default withPageAuthRequired( function New() {
   });
 
   const copyText = () => {
+    setClicked(true);
     window.focus();
-    navigator.clipboard.writeText(posts || "").then(
+    navigator.clipboard.writeText(posts).then(
         () => {
-            alert("Copied to clipboard!");
-            }
+            setTimeout(() => {setCopied(true)}, 1000);
+            setTimeout(() => {setCopied(false),setClicked(false)}, 3000);
+        }
     )
   }
 
   const prompt = `You are an amazing, ${postPrompt.social} media manager who writes amazing and thought provoking posts. Write me an interesting and eyecatching ${postPrompt.social} post of length ${postPrompt.length} from a first person narrative about ${postPrompt.description}. The title is: ${postPrompt.title} and the keywords are ${postPrompt.keywords}. The post should be SEO friendly and use the ${postPrompt.tone}.`
 
+  const title : string = postPrompt.title; //this is the title that we will save to mongodb
 
    /* async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
@@ -71,58 +77,65 @@ export default withPageAuthRequired( function New() {
     }*/
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>){
-        e.preventDefault();
-        setIsWaitingForResponse(true);
-        setHasSubmitted(true);
-        setError(false);
-        setSuccess(false);
-        try {
-          const res = await fetch("/api/chat",{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postPrompt),
-          });
+      setUserProfile(user?.sub || "") //need to make this a global state just so that we can use it for mongodb!
+      e.preventDefault();
+      setPosts("");
+      setIsWaitingForResponse(true);
+      setHasSubmitted(true);
+      setError(false);
+      setSuccess(false);
+      try {
+        const res = await fetch("/api/chat",{
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postPrompt),
+        });
 
-          if (!res.ok) throw new Error(res.statusText);
-          setPosts("");
-          setUserProfile(user?.sub || "") //need to make this a global state just so that we can use it for mongodb!
+        if (!res.ok) throw new Error(res.statusText);
         
 
-          const data = res.body;
-        
+        const data = res.body;
+      
 
-          if(!data) return
+        if(!data) return new Response("No data provided", {status: 400});
 
-          const reader = data.getReader();
-          const decoder = new TextDecoder();
-          let done = false;
+        const reader = data.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
 
-          while(!done){
-              const {value, done: readerDone} = await reader.read();
-              done = readerDone;
-              const chunkValue = decoder.decode(value);
-              setPosts((prev) => prev + chunkValue);
-          }
-          setIsWaitingForResponse(false);
-          setSuccess(true);
+        let post = "";
+
+        while(!done){
+          const {value, done: readerDone} = await reader.read();
+          done = readerDone;
+          const chunkValue = decoder.decode(value);
+          setPosts((prev) => prev + chunkValue);
+          post += chunkValue; //this is the post that we will save to mongodb
+          setPost((prev) => prev + chunkValue);
+        }
+        const response = await fetch("/api/savepost",{
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({title: title, content: post, uid: user?.sub}),
+        });
+  
+        const data2 = await response.json();
+        console.log(data2);
+        setIsWaitingForResponse(false);
+        setSuccess(true);
+        console.log(success);
             
         } catch (error) {
           console.log(error);
           setIsWaitingForResponse(false);
           setError(true);
         }
-
-        /**<button
-            type="submit"
-            className="bg-indigo-600 w-fit text-white px-4 py-2 rounded-md mt-4 hover:bg-indigo-500 transition-all cursor-pointer"
-          >
-            Generate
-          </button> */
-
-        
     }
+    
 
   return (
     <section className="w-full flex flex-col items-center">
@@ -282,19 +295,6 @@ export default withPageAuthRequired( function New() {
             </p>
           </div>
         )}
-        {success && post && (
-          <div className="bg-white rounded-xl shadow-md w-full p-4 flex flex-col gap-4 mt-4 hover:bg-gray-100 transition cursor-copy border">
-            <div className="flex flex-row justify-between">
-                <h1 className="text-gray-600 text-4xl font-semibold">{post.title}</h1>
-                <ClipboardCheck className="z-10" size={20} onClick={copyText}/>
-            </div>
-            <p className="text-gray-600">{post.content}</p>
-            <div className="flex flex-row justify-between">
-                <div></div>
-                <p className="text-gray-600 text-sm">Total Characters: {characterCount}</p>
-            </div>
-          </div>
-        )}
 
         {posts && (
           <div className="w-full flex flex-col gap-2 mt-4">
@@ -302,7 +302,10 @@ export default withPageAuthRequired( function New() {
               <label className="text-gray-600 text-sm font-semibold">
               Response
               </label>
-              <ClipboardCheck className="z-10" size={20} onClick={copyText}/>
+              {copied ? 
+                    <ClipboardCheck className="z-10 text-indigo-600 cursor-pointer" size={20} onClick={copyText}/> :
+                    <Clipboard className={`z-10 text-indigo-600 cursor-pointer ${clicked ? 'animate-pulse' : ''}`} size={20} onClick={copyText}/>
+            }
             </div>
           
           <textarea
