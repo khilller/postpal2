@@ -33,14 +33,14 @@ export default function SignIn() {
                 onClick={() => setToggleDropdown((prev) => !prev)}
                 className="hover:text-gray-500"
               >
-                My Profile
+                New
               </Link>
               <Link
                 href="/posts"
                 onClick={() => setToggleDropdown((prev) => !prev)}
                 className="hover:text-gray-500"
               >
-                My Profile
+                Posts
               </Link>
               <Link
                 href="/profile"
