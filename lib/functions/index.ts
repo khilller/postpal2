@@ -34,3 +34,15 @@ export async function deletPost(_id: string) {
   return data;
 
 }
+
+export async function getProfile() {
+    const res  = await fetch("/api/getProfile",{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        cache: 'no-cache',
+        });
+    const data = await res.json();
+    return data.profile;
+}
