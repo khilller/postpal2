@@ -124,10 +124,10 @@ export default withPageAuthRequired( function New() {
         });
   
         const data2 = await response.json();
-        console.log(data2);
+        //console.log(data2); //this is the response from mongodb
         setIsWaitingForResponse(false);
         setSuccess(true);
-        console.log(success);
+        //console.log(success);
             
         } catch (error) {
           console.log(error);

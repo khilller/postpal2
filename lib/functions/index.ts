@@ -36,7 +36,7 @@ export async function deletPost(_id: string) {
 }
 
 export async function getProfile() {
-    const res  = await fetch("/api/getProfile",{
+    const res  = await fetch("/api/profile",{
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

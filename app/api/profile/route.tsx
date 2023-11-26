@@ -22,11 +22,13 @@ export const GET = withApiAuthRequiredExtended (async (request: NextRequest, res
         if (data.length === 0) {
             await db.collection("profiles").insertOne({
                 uid: user.sub,
+                name: user.name,
                 credits: 0,
             });
 
             profile = {
                 uid: user.sub,
+                name: user.name,
                 credits: 0,
             }
         } else {
