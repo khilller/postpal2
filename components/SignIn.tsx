@@ -27,7 +27,7 @@ export default function SignIn() {
           {toggleDropdown && (
             <div className="dropdown">
               <Credits />
-              <span className="h-0.5 w-full bg-gray-300  w-3/4"></span>
+              <span className="h-0.5 w-full bg-gray-300"></span>
               <Link
                 href="/new"
                 onClick={() => setToggleDropdown((prev) => !prev)}
