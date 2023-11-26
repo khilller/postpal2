@@ -9,6 +9,7 @@ import { useChat } from "ai/react"
 import React from "react";
 import { useRecoilState } from "recoil";
 import { PostAtom } from "@/atoms/postAtom";
+import { refetchCreditsAtom } from "@/atoms/flagAtom";
 
 export default withPageAuthRequired( function New() {
   const [post, setPost] = React.useState("");
@@ -22,6 +23,7 @@ export default withPageAuthRequired( function New() {
   const [userProfile, setUserProfile] = React.useState("");
   const [copied, setCopied] = React.useState(false); //this is for the clipboard icon
   const [clicked, setClicked] = React.useState(false); //this is for the clipboard icon animation
+  const [refetchCredits, setRefetchCredits] = useRecoilState(refetchCreditsAtom);
  
 
   const { user } = useUser();
@@ -100,6 +102,7 @@ export default withPageAuthRequired( function New() {
       
 
         if(!data) return new Response("No data provided", {status: 400});
+        setRefetchCredits((prev) => !prev); //this is to update the credits in the profile page
 
         const reader = data.getReader();
         const decoder = new TextDecoder();
@@ -120,7 +123,7 @@ export default withPageAuthRequired( function New() {
           headers: {
               "Content-Type": "application/json",
           },
-          body: JSON.stringify({title: title, content: post, uid: user?.sub}),
+          body: JSON.stringify({title: title, content: post, uid: user?.sub, email: user?.email, name: user?.name}),
         });
   
         const data2 = await response.json();

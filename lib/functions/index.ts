@@ -35,6 +35,7 @@ export async function deletPost(_id: string) {
 
 }
 
+//get the user credits of profile
 export async function getProfile() {
     const res  = await fetch("/api/profile",{
         method: 'GET',
@@ -44,5 +45,19 @@ export async function getProfile() {
         cache: 'no-cache',
         });
     const data = await res.json();
+    console.log(data);
     return data.profile;
+}
+
+//add credits to user profile
+export async function addCredits() {
+    const res  = await fetch("/api/addcredits",{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        cache: 'no-cache',
+        });
+    const data = await res.json();
+    return data;
 }

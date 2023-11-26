@@ -7,19 +7,21 @@ import { CircleDollarSign } from 'lucide-react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { ProfileAtom } from '@/atoms/profileAtom';
 import { getProfile } from '@/lib/functions';
+import { refetchCreditsAtom } from '@/atoms/flagAtom';
 
 export default function Credits() {
   const [profile, setProfile] = useRecoilState(ProfileAtom);
   const { user } = useUser();
+  const refetchCredits = useRecoilValue(refetchCreditsAtom)
 
   React.useEffect(() => {
     async function fetchProfile() {
       const profile = await getProfile();
-      console.log(profile);
+      //console.log(profile);
       setProfile(profile);
     }
     if (user) fetchProfile();
-  }, [profile, user])
+  }, [profile, user, refetchCredits])
 
   return (
     <div className="flex flex-row justify-center items-center gap-1">

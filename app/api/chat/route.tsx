@@ -1,7 +1,10 @@
 //this is the route for the chat api
 
 import { OpenAIStream } from "@/lib/functions/openaiStream";
-import { withMiddlewareAuthRequired } from "@auth0/nextjs-auth0/edge";
+import { withMiddlewareAuthRequired, getSession } from "@auth0/nextjs-auth0/edge";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { connectToDatabase } from "@/lib/mongodb"
+import { get } from "http";
 
 export const runtime = "edge"
 
@@ -31,11 +34,22 @@ if (!process.env.OPENAI_API_KEY) {
 const withMiddlewareAuthRequiredEdge = withMiddlewareAuthRequired as any
 
 export const POST = withMiddlewareAuthRequiredEdge (async (req: Request) => {
+    //const { db } = await connectToDatabase()
     const data = (await req.json())
     const { title, description, keywords, length, social, tone } = data as PostPrompt;
     //console.log(data)
     //const { title, description, keywords, length, social, tone } = data as PostPrompt;
     if (!data) return new Response("No data provided", { status: 400 });
+
+   //const { user } = await getSession(req, res);
+
+   /*
+    const profile  = await db.collection("profiles").find({ uid: user?.sub }).toArray();
+
+    if (profile[0].credits < 1) {
+        return new Response("Not enough credits", { status: 400 });
+    }
+    */
 
     const payload: Payload = {
         model: "gpt-3.5-turbo",
@@ -54,12 +68,19 @@ export const POST = withMiddlewareAuthRequiredEdge (async (req: Request) => {
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
-        max_tokens: 500,
+        max_tokens: 1000,
         stream: true,
         n: 1,
     }
 
     const stream = await OpenAIStream(payload);
+    /*
+    await db.collection("profiles").updateOne(
+        { uid: user?.sub },
+        { $inc: { credits: -1 } }
+    );
+    */
+
     return new Response(stream, { status: 200 });
 
 });

@@ -1,7 +1,3 @@
-//this is the route for the profile api
-//get the credits from the profile db
-
-
 import { NextRequest, NextResponse } from "next/server"
 import { connectToDatabase } from "@/lib/mongodb"
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0"
@@ -36,10 +32,18 @@ export const GET = withApiAuthRequiredExtended (async (request: NextRequest, res
                 credits: 10,
             }
         } else {
-            profile = await db.collection("profiles").findOne({ uid: user.sub });
+            profile = data[0];
+            await db.collection("profiles").updateOne({
+                uid: user.sub
+            }, {
+                $inc: {
+                    credits: 10
+                }
+            })
+
         }
 
-        return NextResponse.json({ success: true, profile: profile})
+        return NextResponse.json({ success: true}, {status: 200})
     } catch (error) {
         return NextResponse.json({success: false})
     }
