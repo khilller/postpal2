@@ -15,3 +15,22 @@ export async function getPosts() {
   return data.posts;
 
 }
+
+export async function deletPost(_id: string) {
+  const res = await fetch("/api/deletePost/",{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-cache',
+    body: JSON.stringify({ _id }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to delete post: ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return data;
+
+}

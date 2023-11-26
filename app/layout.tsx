@@ -8,6 +8,7 @@ import { RecoilRoot } from 'recoil'
 import Navbar from '../components/nav/Navbar'
 import Sidebar from '@/components/nav/Sidebar'
 import { Analytics } from '@vercel/analytics/react'
+import Footer from '@/components/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,9 +29,15 @@ export default function RootLayout({
             <Navbar />
             <main className="w-full h-full flex flex-col md:flex-row mt-12">
               <Sidebar />
-              <div className='w-full overflow-auto'>{children}</div>
+              <div className='w-full overflow-auto mb-20'>{children}
+              
+              </div>
+            
             </main>
+              <Footer />
+            
             <Analytics />
+            
           </body>
         </RecoilRoot>
       </UserProvider>

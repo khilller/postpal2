@@ -1,7 +1,7 @@
 "use client";
 
 import PostSkeleton from "@/components/PostSkeleton";
-import { getPosts } from "@/lib/functions";
+import { deletPost, getPosts } from "@/lib/functions";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
@@ -22,6 +22,13 @@ export default withPageAuthRequired(function Post() {
     fetchPosts();
   }, []); 
 
+  function handleDeletePost(_id: string) {
+    async function handler() {
+      await deletPost(_id);
+    }
+    setFetchedPosts((prev) => prev.filter((post) => post._id !== _id));
+    handler();
+  }
   
   
 
@@ -49,7 +56,7 @@ export default withPageAuthRequired(function Post() {
           </div>
           )}
           {!loadingPost && fetchedPosts.length > 0 && fetchedPosts.map((post) => (
-            <Card post={post} key={post._id} />
+            <Card post={post} key={post._id} handleDeletePost={handleDeletePost}/>
           ))}
          
         </div>

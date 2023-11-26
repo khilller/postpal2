@@ -138,7 +138,7 @@ export default withPageAuthRequired( function New() {
     
 
   return (
-    <section className="w-full flex flex-col items-center">
+    <section className="w-full flex flex-col items-center z-5">
       <section className="w-[95%] max-w-4xl">
         <form
           onSubmit={handleSubmit}
