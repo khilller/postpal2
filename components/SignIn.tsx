@@ -6,18 +6,27 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 import Credits from './Credits';
+import { useMemo } from 'react';
+import { createAvatar } from '@dicebear/core';
+import { initials } from '@dicebear/collection';
 
 export default function SignIn() {
 
     const { user } = useUser();
     const [toggleDropdown, setToggleDropdown] = React.useState(false);
 
+    const avatar = useMemo(() => {
+      return createAvatar(initials, {
+        seed: user?.name || user?.email || "user",
+      }).toDataUriSync();
+    }, [])
+
   return (
     <div>
       {user ? (
         <div className="">
           <Image
-            src={user.picture || ""}
+            src={user.picture || avatar}
             width={30}
             height={30}
             alt={user.name || "profile picture"}
