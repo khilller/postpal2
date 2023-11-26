@@ -44,8 +44,9 @@ export default withPageAuthRequired(function Profile() {
           You have {profile.credits} Credits.
         </h2>
         <button
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md font-bold text-xl"
+          className="bg-indigo-300 text-white px-4 py-2 rounded-md font-bold text-xl cursor-not-allowed"
           onClick={addCredit}
+          disabled
         >
           Buy More credits
         </button>
