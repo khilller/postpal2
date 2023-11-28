@@ -95,7 +95,7 @@ export default withPageAuthRequired(function Post() {
             })
             .map(([date, posts]) => (
               <div key={date} className="w-full">
-                <div className="flex flex-row w-full justify-between bg-white items-center rounded-md cursor-pointer"
+                <div className="flex flex-row w-full justify-between bg-white shadow-md items-center rounded-md cursor-pointer"
                   onClick={() => setToggleDropdown(prev => date !== prev ? date : null)}
                 >
                   <div>
@@ -108,7 +108,7 @@ export default withPageAuthRequired(function Post() {
                   </div>
                 </div>
                 {toggleDropdown === date && (
-                  <div className="w-full right-0 mt-3 p-5 rounded-lg bg-white min-w-[210px] flex flex-col gap-2 justify-end items-end shadow-md">
+                  <div className="w-full right-0 mt-3 p-5 rounded-lg bg-white min-w-[210px] flex flex-col gap-4 justify-end items-end shadow-md">
                       {posts.map((post) => (
                           <Card post={post} key={post._id} handleDeletePost={handleDeletePost}/>
                       ))}

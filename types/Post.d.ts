@@ -7,4 +7,5 @@ interface Post {
 interface PostWithId extends Post {
     _id: string;
     createAt: string;
+    platform: string;
 }

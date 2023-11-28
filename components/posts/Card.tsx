@@ -25,7 +25,7 @@ export default function Post({post, handleDeletePost}: Props) {
         }
       }
   return (
-    <div className='w-full flex flex-col gap-4 shadow-sm p-4 rounded-xl bg-white'>
+    <div className='w-full flex flex-col gap-4 shadow-md p-4 rounded-xl bg-slate-50'>
         <div className='flex flex-row justify-between'>
             <h1 className='text-xl font-bold text-gray-800'>{post.title}</h1>
             <div className='flex flex-row gap-2'>
@@ -37,6 +37,7 @@ export default function Post({post, handleDeletePost}: Props) {
             </div>
         </div>
         {typeof post.content === 'string' && <p className='text-gray-600'>{post.content}</p>}
+        <p className='text-gray-400 text-sm'>{post.platform}</p>
     </div>
   )
 }
