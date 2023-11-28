@@ -123,7 +123,14 @@ export default withPageAuthRequired( function New() {
           headers: {
               "Content-Type": "application/json",
           },
-          body: JSON.stringify({title: title, content: post, uid: user?.sub, email: user?.email, name: user?.name}),
+          body: JSON.stringify({
+            title: title, 
+            content: post, 
+            id: user?.sub, 
+            email: user?.email, 
+            name: user?.name, 
+            keywords: postPrompt.keywords, 
+            createAt: new Date()}),
         });
   
         const data2 = await response.json();

@@ -26,14 +26,14 @@ export const GET = withApiAuthRequiredExtended (async (request: NextRequest, res
                 uid: user.sub,
                 name: user.name,
                 email: user.email,
-                credits: 10,
+                credits: 50,
             });
 
             profile = {
                 uid: user.sub,
                 name: user.name,
                 email: user.email,
-                credits: 10,
+                credits: 50,
             }
         } else {
             profile = await db.collection("profiles").findOne({ uid: user.sub });

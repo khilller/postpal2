@@ -6,4 +6,5 @@ interface Post {
 
 interface PostWithId extends Post {
     _id: string;
+    createAt: string;
 }
