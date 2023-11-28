@@ -126,10 +126,11 @@ export default withPageAuthRequired( function New() {
           body: JSON.stringify({
             title: title, 
             content: post, 
-            id: user?.sub, 
+            uid: user?.sub, 
             email: user?.email, 
             name: user?.name, 
-            keywords: postPrompt.keywords, 
+            keywords: postPrompt.keywords,
+            platform: postPrompt.social, 
             createAt: new Date()}),
         });
   
