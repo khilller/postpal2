@@ -99,7 +99,7 @@ export default withPageAuthRequired(function Post() {
                   onClick={() => setToggleDropdown(prev => date !== prev ? date : null)}
                 >
                   <div>
-                      <h1 className="text-2xl font-bold text-start text-gray-800  hover:text-indigo-600 px-4 py-2" >
+                      <h1 className="text-xl md:text-2xl font-bold text-start text-gray-800  hover:text-indigo-600 px-4 py-2" >
                           {date}
                       </h1>
                   </div>
