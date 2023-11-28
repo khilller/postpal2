@@ -1,5 +1,5 @@
 ```markdown
-# PostPal
+### PostPal
 
 Welcome to PostPal – Your Ultimate Social Media Content Creation App!
 
