@@ -18,7 +18,7 @@ export default withPageAuthRequired(function Post() {
       await getPosts().then((posts) => {
         setFetchedPosts(posts);
         setLoadingPost(false);
-        //console.log(posts);
+        console.log(posts);
       })
     }
     fetchPosts();

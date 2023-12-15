@@ -19,6 +19,7 @@ export const GET = withApiAuthRequiredExtended (async (request: NextRequest, res
         const data = await db.collection("posts").find({
             uid: user.sub
         }).toArray();
+        //console.log(data)
 
         return NextResponse.json({ success: true, posts: data})
     } catch (error) {
